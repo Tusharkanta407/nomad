@@ -20,8 +20,16 @@ import { WalletConnector } from "@/components/wallet-connector"
 import { LottieHero } from "@/components/lottie-hero"
 import { PWAInstall } from "@/components/pwa-install"
 import { MobileNav } from "@/components/mobile-nav"
+import { useState } from "react"
 
 export default function HomePage() {
+  const [walletAddress, setWalletAddress] = useState("")
+
+  const handleWalletConnected = (address) => {
+    setWalletAddress(address)
+    console.log("Wallet connected:", address)
+  }
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F9FAFB" }}>
       {/* Smaller Header */}
@@ -32,7 +40,7 @@ export default function HomePage() {
               <Globe className="w-4 h-4 text-white" />
             </div>
             <span className="text-lg font-bold" style={{ color: "#1E293B" }}>
-              Nomado
+              Migrant Sathi
             </span>
           </div>
           <nav className="hidden md:flex items-center space-x-4">
@@ -63,7 +71,7 @@ export default function HomePage() {
             >
               Verify
             </Link>
-            <WalletConnector />
+            <WalletConnector onConnected={handleWalletConnected} />
           </nav>
           <div className="md:hidden">
             <MobileNav />

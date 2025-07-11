@@ -5,11 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Wallet, Copy, ExternalLink, CheckCircle, Info } from "lucide-react"
 import { Tooltip } from "./tooltip"
 
-/**
- * Wallet Connector Component
- * Handles Phantom wallet connection and display
- */
-export function WalletConnector() {
+export function WalletConnector({ onConnected }) {
   const [wallet, setWallet] = useState(null)
   const [connected, setConnected] = useState(false)
   const [connecting, setConnecting] = useState(false)
@@ -21,8 +17,10 @@ export function WalletConnector() {
       if (window.solana && window.solana.isPhantom) {
         setWallet(window.solana)
         if (window.solana.isConnected && window.solana.publicKey) {
+          const key = window.solana.publicKey.toString()
           setConnected(true)
-          setPublicKey(window.solana.publicKey.toString())
+          setPublicKey(key)
+          onConnected?.(key)
         }
       }
     }
@@ -34,7 +32,7 @@ export function WalletConnector() {
         window.removeEventListener("load", checkPhantom)
       }
     }
-  }, [])
+  }, [onConnected])
 
   const connectWallet = async () => {
     if (!wallet) {
@@ -45,8 +43,10 @@ export function WalletConnector() {
     try {
       setConnecting(true)
       const response = await wallet.connect()
+      const key = response.publicKey.toString()
       setConnected(true)
-      setPublicKey(response.publicKey.toString())
+      setPublicKey(key)
+      onConnected?.(key)
     } catch (error) {
       console.error("Failed to connect wallet:", error)
     } finally {
@@ -60,6 +60,7 @@ export function WalletConnector() {
         await wallet.disconnect()
         setConnected(false)
         setPublicKey("")
+        onConnected?.("") // Clear in parent too
       } catch (error) {
         console.error("Failed to disconnect wallet:", error)
       }
@@ -83,7 +84,9 @@ export function WalletConnector() {
       <div className="flex items-center space-x-2">
         <Tooltip
           content={
-            wallet ? "Connect your Phantom wallet to access digital cards" : "Install Phantom wallet to get started"
+            wallet
+              ? "Connect your Phantom wallet to access digital cards"
+              : "Install Phantom wallet to get started"
           }
         >
           <Button
@@ -112,7 +115,10 @@ export function WalletConnector() {
   return (
     <div className="flex items-center space-x-2">
       <Tooltip content={`Connected: ${shortenAddress(publicKey)}`}>
-        <div className="flex items-center space-x-2 px-3 py-1 rounded-lg" style={{ backgroundColor: "#F1F5F9" }}>
+        <div
+          className="flex items-center space-x-2 px-3 py-1 rounded-lg"
+          style={{ backgroundColor: "#F1F5F9" }}
+        >
           <CheckCircle className="w-4 h-4" style={{ color: "#22C55E" }} />
           <span className="font-mono text-sm" style={{ color: "#1E293B" }}>
             {shortenAddress(publicKey)}
