@@ -24,7 +24,6 @@ export function WalletConnector({ onConnected }) {
         }
       }
     }
-
     if (typeof window !== "undefined") {
       checkPhantom()
       window.addEventListener("load", checkPhantom)
@@ -33,13 +32,11 @@ export function WalletConnector({ onConnected }) {
       }
     }
   }, [onConnected])
-
   const connectWallet = async () => {
     if (!wallet) {
       window.open("https://phantom.app/", "_blank")
       return
     }
-
     try {
       setConnecting(true)
       const response = await wallet.connect()
@@ -53,7 +50,6 @@ export function WalletConnector({ onConnected }) {
       setConnecting(false)
     }
   }
-
   const disconnectWallet = async () => {
     if (wallet) {
       try {
@@ -66,7 +62,6 @@ export function WalletConnector({ onConnected }) {
       }
     }
   }
-
   const shortenAddress = (address) => {
     return `${address.slice(0, 4)}...${address.slice(-4)}`
   }
@@ -78,7 +73,6 @@ export function WalletConnector({ onConnected }) {
       setTimeout(() => setCopied(false), 2000)
     }
   }
-
   if (!connected) {
     return (
       <div className="flex items-center space-x-2">
@@ -102,7 +96,6 @@ export function WalletConnector({ onConnected }) {
             {connecting ? "Connecting..." : wallet ? "Connect" : "Install"}
           </Button>
         </Tooltip>
-
         {!wallet && (
           <Tooltip content="Phantom is a secure Solana wallet for Web3 applications">
             <Info className="w-4 h-4" style={{ color: "#64748B" }} />
@@ -111,7 +104,6 @@ export function WalletConnector({ onConnected }) {
       </div>
     )
   }
-
   return (
     <div className="flex items-center space-x-2">
       <Tooltip content={`Connected: ${shortenAddress(publicKey)}`}>
@@ -148,7 +140,6 @@ export function WalletConnector({ onConnected }) {
           Cards
         </Button>
       </Tooltip>
-
       <Tooltip content="Disconnect wallet">
         <Button
           variant="ghost"
